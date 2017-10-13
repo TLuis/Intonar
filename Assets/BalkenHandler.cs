@@ -17,6 +17,7 @@ public class BalkenHandler : MonoBehaviour {
     //float[] keys = { -1.43f, -1.3f, -1.17f, -1.04f, -0.91f, -0.78f, -0.65f, -0.52f, -0.39f, -0.26f, -0.13f, 0, 0.13f, 0.26f, 0.39f, 0.52f, 0.65f, 0.78f, 0.91f, 1.04f, 1.17f, 1.30f, 1.43f };
     float[] rest = { 1, 0.5f, 0.25f, 0.125f };
     float[] wholes = { -8.4f, -6f, -3.6f, -1.2f, 1.2f, 3.6f, 6f, 8.4f };
+    float[] wholes1 = {-43.2f,-40.8f,-38.4f,-36f,-33.6f,-31.2f,-28.8f,-26.4f,-24f,-21.6f,-19.2f,-16.8f,-14.4f,-12f,-9.6f,-7.2f,-4.8f,-2.4f,0f,2.4f,4.8f,7.2f,9.6f,12f,14.4f,16.8f,19.2f,21.6f,24f,26.4f,28.8f,31.2f,33.6f,36f};
 
     List<float> tempoList = new List<float> { 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 17, 18 };
     List<float> durationList = new List<float> { 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1 };
@@ -41,7 +42,7 @@ public class BalkenHandler : MonoBehaviour {
         {
             balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
-            balken.GetComponent<Balken>().Position(wholes[noteList1[i]]*0.01f - 0.072f, y_top, 0); 
+            balken.GetComponent<Balken>().Position(wholes1[noteList1[i]+16]*0.01f - 0.072f, y_top, 0); 
             balken.GetComponent<Balken>().SetLength(0);
             i++;
         }
