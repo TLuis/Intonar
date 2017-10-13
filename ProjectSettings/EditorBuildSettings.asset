@@ -4,7 +4,4 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Balken.unity
-    guid: 98334c090b3ab444c885e4db633f5239
+  m_Scenes: []
