@@ -25,6 +25,9 @@ public class BalkenHandler : MonoBehaviour {
     List<int> noteList1 = new List<int> { 3, 3, 3, 3, 3, 3, 3, 5, 1, 2, 3, 4, 4, 4, 4};
     List<float> suppList = new List<float> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
+    float[,] beat = { { 1f, 1f, 2f, 3f, 4f, 5f, 5f, 6f, 7f, 8f, 9f, 9f, 10f, 11f, 12f, 13f, 13f, 14.5f, 15f, 17f, 17f, 18f, 19f, 20f, 21f, 21f, 22f, 23f, 24f, 25f, 25f, 26f, 27f, 28f, 29f, 29f, 30.5f, 31f, 31f, 31f, 31f, 33f, 33f, 34f, 35f, 36f, 37f, 37f, 38f, 38.5f, 39f, 40f, 41f, 41f, 42f, 42.5f, 43f, 44f, 45f, 46f, 47f, 49f, 49f, 50f, 51f, 52f, 53f, 53f, 54f, 55f, 56f, 57f, 57f, 58f, 59f, 60f, 61f, 61f, 62.5f, 63f, 63f, 63f, 63f }, { 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1.5f, 0.5f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f }, { -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 3f, 2f, 2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -2f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, -2f, -4f, -6f, 1f, -2f, 2f, 2f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 2f, 1f, 2f, -2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, 1f, -2f, -4f, -6f }
+    , { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } };
+
     int bpm2sec = 1/60;
 
     float whole = 1;
@@ -38,23 +41,23 @@ public class BalkenHandler : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        if (Time.fixedTime > tempoList[i] && i < 15)
+        if (Time.fixedTime > beat[0,i] && i < beat.Length)
         {
             balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
-            balken.GetComponent<Balken>().Position(wholes1[noteList1[i]+16]*0.01f - 0.072f, y_top, 0); 
+            balken.GetComponent<Balken>().Position(wholes1[(int)beat[2,i]+16]*0.01f - 0.072f, y_top, 0); 
             balken.GetComponent<Balken>().SetLength(0);
             i++;
         }
 
 
-        if (this.transform.childCount != 0)
+        if (this.transform.childCount != 0 && Time.fixedTime < 64)
         {
             int j = 0;
             foreach (Transform balken in transform)
             {
 
-                if (balken.transform.localScale.y < durationList[j] * y_scale && suppList[j] == 0)
+                if (balken.transform.localScale.y < beat[1,j] * y_scale && beat[3,j] == 0)
                 {
                     balken.GetComponent<Balken>().SetLength(balken.transform.localScale.y + speed);
                 }
@@ -68,7 +71,7 @@ public class BalkenHandler : MonoBehaviour {
                 else
                 {
                     balken.GetComponent<Balken>().Move(0, -speed, 0);
-                    suppList[j] = 1;
+                    beat[3,j] = 1;
                 }
 
                 if (balken.transform.localPosition.y < y_bottom)
