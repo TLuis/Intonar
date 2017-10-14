@@ -230,7 +230,11 @@ PlayerSettings:
   m_BuildTargetIcons: []
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsAPIs: []
-  m_BuildTargetVRSettings: []
+  m_BuildTargetVRSettings:
+  - m_BuildTarget: Metro
+    m_Enabled: 1
+    m_Devices:
+    - HoloLens
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   webPlayerTemplate: APPLICATION:Default
@@ -510,11 +514,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Balken
   metroPackageVersion: 
-  metroCertificatePath: 
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: Holographic Academy
+  metroCertificateIssuer: Holographic Academy
+  metroCertificateNotAfter: 80cb70777a62d401
   metroApplicationDescription: Balken
   wsaImages: {}
   metroTileShortName: 
