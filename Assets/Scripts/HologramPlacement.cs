@@ -21,6 +21,7 @@ public class HologramPlacement : MonoBehaviour
     public Vector3 initialPosCamera;
     public Quaternion initialRotationCamera;
     public GameObject cameraObj;
+    public GameObject debugTextObject;
 
     /*
     // Called by GazeGestureManager when the user performs a Select gesture
@@ -43,24 +44,60 @@ public class HologramPlacement : MonoBehaviour
         }
     }
     */
-
+    /*
     void OnFix()
     {
         currentMode = Mode.FIXED;
     }
+    */
 
-    void OnMoving(Axis axis)
+    public void OnMoving(Axis axis)
     {
-        this.axis = axis;
-        currentMode = Mode.MOVING;
-        initialPosHolgram = this.transform.localPosition;
-        initialPosCamera = cameraObj.transform.localPosition;
+        if(currentMode == Mode.FIXED || currentMode == Mode.ROTATING)
+        {
+            debugTextObject.GetComponent<TextMesh>().text = debugTextObject.GetComponent<TextMesh>().text +
+            "OnMoving called!\n";
+            this.axis = axis;
+            currentMode = Mode.MOVING;
+            initialPosHolgram = this.transform.localPosition;
+            initialPosCamera = cameraObj.transform.localPosition;
+        } else if(currentMode == Mode.MOVING)
+        {
+            currentMode = Mode.FIXED;
+        } else
+        {
+            // TODO
+        }
     }
 
-    void OnRotating()
+    public void OnRotating()
     {
-        currentMode = Mode.ROTATING;
+        if (currentMode == Mode.FIXED || currentMode == Mode.MOVING)
+        {
+            currentMode = Mode.ROTATING;
+            initialRotationHologram = this.transform.rotation;
+            initialRotationCamera = cameraObj.transform.rotation;
+        } else if(currentMode == Mode.ROTATING)
+        {
+            currentMode = Mode.FIXED;
+        } else
+        {
+            //TODO
+        }
     }
+
+    /*
+    void OnPlay()
+    {
+        // TODO
+    }
+
+    void OnReset()
+    {
+        // TODO
+    }
+
+    */
 
     private void Update()
     {
