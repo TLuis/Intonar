@@ -10,14 +10,16 @@ public class BalkenHandler : MonoBehaviour {
     Transform black;
     public Transform blackPrefab;
 
-    static int bpm = 60;
-    static float convbpm = 1 / 60;
+    static float blackOffset = -0.01f;
+    static float bpm = 120f;
+    static float convbpm = 0.01666667f;
     static float meterspersecond = 0.05f*convbpm*bpm;
     static float speed = 0;
     float y_bottom = 0;
     float y_top = .1f;
     int i = 0;
-    float y_scale = .05f;
+    static float luecke = 0.01f;
+    float y_scale = (.05f-luecke)*convbpm*bpm;
     float startTime = 0;
     float deltaTime = 0;
     public bool temp1 = false;
@@ -25,7 +27,8 @@ public class BalkenHandler : MonoBehaviour {
 
     bool started = false;
     bool reseted = false;
-    public bool ein = false;
+    public bool hidden = false;
+    public bool condHid = true;
 
     float[] keys = { -40.25f, -39.4f, -37.95f, -36.5f, -35.65f, -33.35f, -32.5f, -31.05f, -29.9f, -28.75f, -27.3f, -26.45f, -24.15f, -23.3f, -21.85f, -20.4f, -19.55f, -17.25f, -16.4f, -14.95f, -13.8f, -12.65f, -11.2f, -10.35f, -8.05f, -7.2f, -5.75f, -4.3f, -3.45f, -1.15f, -0.3f, 1.15f, 2.3f, 3.45f, 4.9f, 5.75f, 8.05f, 8.9f, 10.35f, 11.8f, 12.65f, 14.95f, 15.8f, 17.25f, 18.4f, 19.55f, 21f, 21.85f, 24.15f, 25f, 26.45f, 27.9f, 28.75f, 31.05f, 31.9f, 33.35f, 34.5f, 35.65f, 37.1f, 37.95f, 40.25f };
 
@@ -55,22 +58,22 @@ public class BalkenHandler : MonoBehaviour {
         {
             balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
-            balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top, -0.1f);
+            balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top, blackOffset);
             balken.GetComponent<Balken>().SetLength(0.5f);
         }
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (ein)
+        if (hidden && condHid)
         {
             foreach (Transform balken in transform)
             {
                 Destroy(balken.gameObject);
             }
-            ein = false;
+            condHid = false;
         }
-        if(started && !ein) {
+        if(started && hidden) {
             deltaTime = Time.fixedTime - startTime;
             if ( i < tempoList.Count )
             if ( deltaTime > tempoList[i])
@@ -86,13 +89,13 @@ public class BalkenHandler : MonoBehaviour {
                 {
                     balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
                     balken.SetParent(this.transform);
-                    balken.GetComponent<Balken>().Position(blacks[(int)noteList[i] + 12] * 0.01f, y_top, -0.05f);
+                    balken.GetComponent<Balken>().Position(blacks[(int)noteList[i] + 12] * 0.01f, y_top, blackOffset);
                     balken.GetComponent<Balken>().SetLength(0);
                 }
                 i++;
             }
 
-            speed = meterspersecond* Time.deltaTime;
+            speed = meterspersecond * Time.deltaTime;
 
             if (this.transform.childCount != 0)
             {
@@ -121,12 +124,7 @@ public class BalkenHandler : MonoBehaviour {
                 if (balken.transform.localPosition.y < y_bottom)
                 {
                     balken.gameObject.SetActive(false);
-                    //suppList.RemoveAt(j);
-                    //durationList.RemoveAt(j);
-                    //noteList.RemoveAt(j);
-                    //j--;
                 }
-
                 j++;
                 }
             }
@@ -172,5 +170,10 @@ public class BalkenHandler : MonoBehaviour {
     {
         reseted = true;
         started = false;
+    }
+
+    public void Hide()
+    {
+        hidden = true;
     }
 }
