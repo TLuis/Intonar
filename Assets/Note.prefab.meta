@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 5a3f3ffc3b2d19246a31ece0cf13975e
+labels:
+- Character
 timeCreated: 1507883626
 licenseType: Free
 NativeFormatImporter:
