@@ -33,10 +33,6 @@ public class BalkenHandler : MonoBehaviour {
     float whole = 1;
     float half = 0.5f;
     float quarter = 0.25f;
-
-    // Use this for initialization
-    void Start () {
-    }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
