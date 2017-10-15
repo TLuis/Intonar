@@ -7,86 +7,176 @@ public class BalkenHandler : MonoBehaviour {
 
     Transform balken;
     public Transform balkenPrefab;
-    float speed = 0.005f;
+    Transform black;
+    public Transform blackPrefab;
+
+    static float blackOffset = 0.01f;
+    static float bpm = 120f; //120 bpm
+    static float convbpm = 0.01666667f;
+    static float meterspersecond = 0.05f*convbpm*bpm; //5cm/s
+    static float speed = 0; //later speed = meterspersecond*Time.deltaTime
+    //begin and end
     float y_bottom = 0;
-    float y_top = .01f;
+    float y_top = .1f;
     int i = 0;
-    float y_scale = .1f;
+    static float luecke = 0.01f;
+    float y_scale = (.05f-luecke)*convbpm*bpm;
+    float startTime = 0;
+    float deltaTime = 0;
+    public bool temp_start = false;
+    public bool temp_reset = false;
+    public float balkenPos = 0.07f;
 
-    float[] keys = { -14.3f, -13f, -11.7f, -10.4f, -9.1f, -7.8f, -6.5f, -5.2f, -3.9f, -2.6f, -1.3f, 0, 1.3f, 2.6f, 3.9f, 5.2f, 6.5f, 7.8f, 9.1f, 10.4f, 11.7f, 13.0f, 14.3f };
-    //float[] keys = { -1.43f, -1.3f, -1.17f, -1.04f, -0.91f, -0.78f, -0.65f, -0.52f, -0.39f, -0.26f, -0.13f, 0, 0.13f, 0.26f, 0.39f, 0.52f, 0.65f, 0.78f, 0.91f, 1.04f, 1.17f, 1.30f, 1.43f };
-    float[] rest = { 1, 0.5f, 0.25f, 0.125f };
-    float[] wholes = { -8.4f, -6f, -3.6f, -1.2f, 1.2f, 3.6f, 6f, 8.4f };
-    float[] wholes1 = {-43.2f,-40.8f,-38.4f,-36f,-33.6f,-31.2f,-28.8f,-26.4f,-24f,-21.6f,-19.2f,-16.8f,-14.4f,-12f,-9.6f,-7.2f,-4.8f,-2.4f,0f,2.4f,4.8f,7.2f,9.6f,12f,14.4f,16.8f,19.2f,21.6f,24f,26.4f,28.8f,31.2f,33.6f,36f};
+    bool started = false;
+    bool reseted = false;
+    public bool hidden = false;
+    bool condHid = true;
 
-    List<float> tempoList = new List<float> { 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 17, 18 };
-    List<float> durationList = new List<float> { 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1 };
-    List<int> noteList = new List<int> { 5, 5, 5, 5, 5, 5, 5, 8, 1, 3, 5, 6, 6, 6, 6 };
-    List<int> noteList1 = new List<int> { 3, 3, 3, 3, 3, 3, 3, 5, 1, 2, 3, 4, 4, 4, 4};
-    List<float> suppList = new List<float> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    float[] keys = { -40.25f, -39.4f, -37.95f, -36.5f, -35.65f, -33.35f, -32.5f, -31.05f, -29.9f, -28.75f, -27.3f, -26.45f, -24.15f, -23.3f, -21.85f, -20.4f, -19.55f, -17.25f, -16.4f, -14.95f, -13.8f, -12.65f, -11.2f, -10.35f, -8.05f, -7.2f, -5.75f, -4.3f, -3.45f, -1.15f, -0.3f, 1.15f, 2.3f, 3.45f, 4.9f, 5.75f, 8.05f, 8.9f, 10.35f, 11.8f, 12.65f, 14.95f, 15.8f, 17.25f, 18.4f, 19.55f, 21f, 21.85f, 24.15f, 25f, 26.45f, 27.9f, 28.75f, 31.05f, 31.9f, 33.35f, 34.5f, 35.65f, 37.1f, 37.95f, 40.25f };
 
-    float[,] beat = { { 1f, 1f, 2f, 3f, 4f, 5f, 5f, 6f, 7f, 8f, 9f, 9f, 10f, 11f, 12f, 13f, 13f, 14.5f, 15f, 17f, 17f, 18f, 19f, 20f, 21f, 21f, 22f, 23f, 24f, 25f, 25f, 26f, 27f, 28f, 29f, 29f, 30.5f, 31f, 31f, 31f, 31f, 33f, 33f, 34f, 35f, 36f, 37f, 37f, 38f, 38.5f, 39f, 40f, 41f, 41f, 42f, 42.5f, 43f, 44f, 45f, 46f, 47f, 49f, 49f, 50f, 51f, 52f, 53f, 53f, 54f, 55f, 56f, 57f, 57f, 58f, 59f, 60f, 61f, 61f, 62.5f, 63f, 63f, 63f, 63f }, { 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1.5f, 0.5f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f }, { -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 3f, 2f, 2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -2f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, -2f, -4f, -6f, 1f, -2f, 2f, 2f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 2f, 1f, 2f, -2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, 1f, -2f, -4f, -6f }
-    , { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } };
+    //position of keys
+    float[] whites = { -40.25f, -37.95f, -35.65f, -33.35f, -31.05f, -28.75f, -26.45f, -24.15f, -21.85f, -19.55f, -17.25f, -14.95f, -12.65f, -10.35f, -8.05f, -5.75f, -3.45f, -1.15f, 1.15f, 3.45f, 5.75f, 8.05f, 10.35f, 12.65f, 14.95f, 17.25f, 19.55f, 21.85f, 24.15f, 26.45f, 28.75f, 31.05f, 33.35f, 35.65f, 37.95f, 40.25f };
+    float[] blacks = { -39.4f, -36.5f, -32.5f, -29.9f, -27.3f, -23.3f, -20.4f, -16.4f, -13.8f, -11.2f, -7.2f, -4.3f, -0.3f, 2.3f, 4.9f, 8.9f, 11.8f, 15.8f, 18.4f, 21f, 25f, 27.9f, 31.9f, 34.5f, 37.1f };
 
-    int bpm2sec = 1/60;
+    //notes
+    List<float> tempoList = new List<float> { 1f, 1f, 2f, 3f, 4f, 5f, 5f, 6f, 7f, 8f, 9f, 9f, 10f, 11f, 12f, 13f, 13f, 14.5f, 15f, 17f, 17f, 18f, 19f, 20f, 21f, 21f, 22f, 23f, 24f, 25f, 25f, 26f, 27f, 28f, 29f, 29f, 30.5f, 31f, 31f, 31f, 31f, 33f, 33f, 34f, 35f, 36f, 37f, 37f, 38f, 38.5f, 39f, 40f, 41f, 41f, 42f, 42.5f, 43f, 44f, 45f, 46f, 47f, 49f, 49f, 50f, 51f, 52f, 53f, 53f, 54f, 55f, 56f, 57f, 57f, 58f, 59f, 60f, 61f, 61f, 62.5f, 63f, 63f, 63f, 63f };
+    List<float> durationList = new List<float> { 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1.5f, 0.5f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 4f, 1f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 2f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 4f, 1f, 1f, 1f, 1f, 2f, 1.5f, 0.5f, 2f, 2f, 2f, 2f };
+    List<float> noteList = new List<float> { -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 3f, 2f, 2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -2f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, -2f, -4f, -6f, 1f, -2f, 2f, 2f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 1f, -2f, 2f, 3f, 4f, 3f, 2f, 1f, 2f, -2f, -6f, 3f, 3f, 4f, 5f, -2f, 5f, 4f, 3f, 2f, -6f, 1f, 1f, 2f, 3f, -2f, 2f, 1f, 1f, -2f, -4f, -6f };
+    List<float> suppList = new List<float> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    List<int> whiteblack = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    float whole = 1;
-    float half = 0.5f;
-    float quarter = 0.25f;
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-
-        if (Time.fixedTime > beat[0,i] && i < beat.Length)
+    // Use this for initialization
+    void Start()
+    {  
+        for (int i = 0; i < whites.Length; i++)
         {
             balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
-            balken.GetComponent<Balken>().Position(wholes1[(int)beat[2,i]+16]*0.01f - 0.072f, y_top, 0); 
-            balken.GetComponent<Balken>().SetLength(0);
-            i++;
+            balken.GetComponent<Balken>().Position(whites[i] * 0.01f, y_top, balkenPos);
+            balken.GetComponent<Balken>().SetLength(0.5f);
         }
 
-
-        if (this.transform.childCount != 0 && Time.fixedTime < 64)
+        for (int i = 0; i < blacks.Length; i++)
         {
-            int j = 0;
+            balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
+            balken.SetParent(this.transform);
+            balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top, balkenPos - blackOffset);
+            balken.GetComponent<Balken>().SetLength(0.5f);
+        }
+    }
+	
+	// Update is called once per frame
+	void FixedUpdate () {
+        if (hidden && condHid)
+        {
             foreach (Transform balken in transform)
             {
+                Destroy(balken.gameObject);
+            }
+            condHid = false;
+        }
+        if(started && hidden) {
+            deltaTime = Time.fixedTime - startTime;
+            if ( i < tempoList.Count )
+            if ( deltaTime > tempoList[i])
+            {
+                if (whiteblack[i] == 0)
+                {
+                    balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
+                    balken.SetParent(this.transform);
+                    balken.GetComponent<Balken>().Position(whites[(int)noteList[i] + 17] * 0.01f, y_top, balkenPos);
+                    balken.GetComponent<Balken>().SetLength(0);
+                }
+                if (whiteblack[i] == 1)
+                {
+                    balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
+                    balken.SetParent(this.transform);
+                    balken.GetComponent<Balken>().Position(blacks[(int)noteList[i] + 12] * 0.01f, y_top, balkenPos - blackOffset);
+                    balken.GetComponent<Balken>().SetLength(0);
+                }
+                i++;
+            }
 
-                if (balken.transform.localScale.y < beat[1,j] * y_scale && beat[3,j] == 0)
+            speed = meterspersecond * Time.deltaTime;
+
+            if (this.transform.childCount != 0)
+            {
+            int j = 0;
+            if(balken.gameObject.activeSelf)
+            foreach (Transform balken in transform)
+            {
+                //increase size when new until size is reached
+                if (balken.transform.localScale.y < durationList[j] * y_scale && suppList[j] == 0)
                 {
                     balken.GetComponent<Balken>().SetLength(balken.transform.localScale.y + speed);
                 }
-
+                //decrease size when bottom is reached
                 else if (balken.GetComponent<Balken>().GetY_bottom() < y_bottom)
                 {
                     balken.GetComponent<Balken>().SetY_top(balken.GetComponent<Balken>().GetY_top() - speed);
                     balken.GetComponent<Balken>().SetLength(balken.transform.localScale.y - speed);
                 }
-
+                //move down
                 else
                 {
                     balken.GetComponent<Balken>().Move(0, -speed, 0);
-                    beat[3,j] = 1;
+                    suppList[j] = 1;
                 }
-
+                //inactivate
                 if (balken.transform.localPosition.y < y_bottom)
                 {
-                    balken.gameObject.active = false;
-                    //suppList.RemoveAt(j);
-                    //durationList.RemoveAt(j);
-                    //noteList.RemoveAt(j);
-                    //tempoList.RemoveAt(j);
-                    //j--;
+                    balken.gameObject.SetActive(false);
                 }
-
                 j++;
+                }
             }
+        }
+        //reset state
+        if(reseted)
+        {
+            foreach (Transform balken in transform)
+            {
+                Destroy(balken.gameObject);
+            }
+            for (int s = 0; s < suppList.Count; s++)
+            {
+                suppList[s] = 0;   
+            }
+            i = 0;
+        }
+
+        //start and reset temps
+        if(temp_start)
+        {
+            reseted = false;
+            started = true;
+            startTime = Time.fixedTime;
+            temp_start = false;
+        }
+
+        if (temp_reset)
+        {
+            reseted = true;
+            started = false;
+            temp_reset = false;
         }
     }
 
-    void Update()
+    public void Initialize()
     {
-       
+        reseted = false;
+        started = true;
+        startTime = Time.fixedTime;
+    }
+
+    public void Reset()
+    {
+        reseted = true;
+        started = false;
+    }
+
+    public void Hide()
+    {
+        hidden = true;
     }
 }

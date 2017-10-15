@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class Note : MonoBehaviour {
 
-    public float time;
-    public float duration;
-    public int key;
-    public int done;
-    public Transform balken;
-    public Transform balkenPrefab;
 
     // Use this for initialization
     void Start () {
@@ -20,4 +14,10 @@ public class Note : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void Position(float x, float y, float z)
+    {
+        this.transform.localPosition = new Vector3(x, y, z);
+    }
+
 }
