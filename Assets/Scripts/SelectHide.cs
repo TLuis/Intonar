@@ -11,7 +11,7 @@ public class SelectHide : MonoBehaviour {
     public GameObject selectResetSphere;
     public GameObject alignmentBox; 
     bool elementsHidden;
-    public bool triggerHide; 
+    public bool toggleHide;
     
     void OnSelect()
     {
@@ -23,16 +23,23 @@ public class SelectHide : MonoBehaviour {
             selectRotationSphere.SetActive(false);
             selectStartSphere.SetActive(false);
             alignmentBox.SetActive(false); 
+        } else
+        {
+            selectMovementSphere.SetActive(true);
+            selectResetSphere.SetActive(true);
+            selectRotationSphere.SetActive(true);
+            selectStartSphere.SetActive(true);
+            alignmentBox.SetActive(true);
         }
-        //TODO implement a way to make elements visible again
+        elementsHidden = !elementsHidden;
     }
 
     void Update()
     {
-        if(triggerHide == true)
+        if(toggleHide == true)
         {
             OnSelect();
-            triggerHide = false; 
+            toggleHide = false; 
         }
     }
 }
