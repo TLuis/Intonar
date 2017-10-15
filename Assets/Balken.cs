@@ -48,6 +48,4 @@ public class Balken : MonoBehaviour {
         this.transform.localPosition = new Vector3(this.transform.localPosition.x, GetY_top() - length / 2, this.transform.localPosition.z);
         this.transform.localScale = new Vector3(this.transform.localScale.x, length, this.transform.localScale.z);
     }
-
-    
 }
