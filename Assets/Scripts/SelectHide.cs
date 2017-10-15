@@ -22,14 +22,14 @@ public class SelectHide : MonoBehaviour {
             selectResetSphere.SetActive(false);
             selectRotationSphere.SetActive(false);
             selectStartSphere.SetActive(false);
-            alignmentBox.SetActive(false); 
+            //alignmentBox.SetActive(false); 
         } else
         {
             selectMovementSphere.SetActive(true);
             selectResetSphere.SetActive(true);
             selectRotationSphere.SetActive(true);
             selectStartSphere.SetActive(true);
-            alignmentBox.SetActive(true);
+            //alignmentBox.SetActive(true);
         }
         elementsHidden = !elementsHidden;
     }
