@@ -11,7 +11,7 @@ public class BalkenHandler : MonoBehaviour {
     public Transform blackPrefab;
 
     static float blackOffset = 0.01f;
-    static float bpm = 120; // bpm
+    static float bpm = 60; // bpm
     static float convbpm = 0.01666667f;
     static float meterspersecond = 0.05f*convbpm*bpm; //5cm/s
     static float speed = 0; //later.. speed = meterspersecond*Time.deltaTime
@@ -59,6 +59,7 @@ public class BalkenHandler : MonoBehaviour {
             {
                 balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
                 balken.SetParent(this.transform);
+                balken.transform.localRotation = Quaternion.identity;
                 balken.GetComponent<Balken>().Position(whites[i] * 0.01f, y_top - 0.1f, balkenPos);
                 balken.GetComponent<Balken>().SetLength(0.5f);
             }
@@ -67,6 +68,7 @@ public class BalkenHandler : MonoBehaviour {
             {
                 balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
                 balken.SetParent(this.transform);
+                balken.transform.localRotation = Quaternion.identity;
                 balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top - 0.1f, balkenPos - blackOffset);
                 balken.GetComponent<Balken>().SetLength(0.5f);
             }
