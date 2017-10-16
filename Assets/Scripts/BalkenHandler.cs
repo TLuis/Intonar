@@ -11,10 +11,10 @@ public class BalkenHandler : MonoBehaviour {
     public Transform blackPrefab;
 
     static float blackOffset = 0.01f;
-    static float bpm = 120f; //120 bpm
+    static float bpm = 60; // bpm
     static float convbpm = 0.01666667f;
     static float meterspersecond = 0.05f*convbpm*bpm; //5cm/s
-    static float speed = 0; //later speed = meterspersecond*Time.deltaTime
+    static float speed = 0; //later.. speed = meterspersecond*Time.deltaTime
     //begin and end
     float y_bottom = 0;
     float y_top = .1f;
@@ -30,7 +30,7 @@ public class BalkenHandler : MonoBehaviour {
     bool started = false;
     bool reseted = false;
     public bool hidden = false;
-    bool condHid = true;
+    bool condHid = false;
 
     float[] keys = { -40.25f, -39.4f, -37.95f, -36.5f, -35.65f, -33.35f, -32.5f, -31.05f, -29.9f, -28.75f, -27.3f, -26.45f, -24.15f, -23.3f, -21.85f, -20.4f, -19.55f, -17.25f, -16.4f, -14.95f, -13.8f, -12.65f, -11.2f, -10.35f, -8.05f, -7.2f, -5.75f, -4.3f, -3.45f, -1.15f, -0.3f, 1.15f, 2.3f, 3.45f, 4.9f, 5.75f, 8.05f, 8.9f, 10.35f, 11.8f, 12.65f, 14.95f, 15.8f, 17.25f, 18.4f, 19.55f, 21f, 21.85f, 24.15f, 25f, 26.45f, 27.9f, 28.75f, 31.05f, 31.9f, 33.35f, 34.5f, 35.65f, 37.1f, 37.95f, 40.25f };
 
@@ -48,27 +48,33 @@ public class BalkenHandler : MonoBehaviour {
     // Use this for initialization
     void Start()
     {  
-        for (int i = 0; i < whites.Length; i++)
-        {
-            balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
-            balken.SetParent(this.transform);
-            balken.transform.localRotation = Quaternion.identity;
-            balken.GetComponent<Balken>().Position(whites[i] * 0.01f, y_top - 0.1f, balkenPos);
-            balken.GetComponent<Balken>().SetLength(0.5f);
-        }
 
-        for (int i = 0; i < blacks.Length; i++)
-        {
-            balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
-            balken.SetParent(this.transform);
-            balken.transform.localRotation = Quaternion.identity;
-            balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top - 0.1f, balkenPos - blackOffset);
-            balken.GetComponent<Balken>().SetLength(0.5f);
-        }
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+        if(!hidden && !condHid)
+        {
+            for (int i = 0; i < whites.Length; i++)
+            {
+                balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
+                balken.SetParent(this.transform);
+                balken.transform.localRotation = Quaternion.identity;
+                balken.GetComponent<Balken>().Position(whites[i] * 0.01f, y_top - 0.1f, balkenPos);
+                balken.GetComponent<Balken>().SetLength(0.5f);
+            }
+
+            for (int i = 0; i < blacks.Length; i++)
+            {
+                balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
+                balken.SetParent(this.transform);
+                balken.transform.localRotation = Quaternion.identity;
+                balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top - 0.1f, balkenPos - blackOffset);
+                balken.GetComponent<Balken>().SetLength(0.5f);
+            }
+            condHid = true;
+            started = false;
+        }
         if (hidden && condHid)
         {
             foreach (Transform balken in transform)
@@ -87,7 +93,7 @@ public class BalkenHandler : MonoBehaviour {
                     balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
                     balken.SetParent(this.transform);
                     balken.transform.localRotation = Quaternion.identity;
-                    balken.GetComponent<Balken>().Position(whites[(int)noteList[i] + 17] * 0.01f, y_top, balkenPos);
+                    balken.GetComponent<Balken>().Position(whites[(int)noteList[i] + 14] * 0.01f, y_top, balkenPos);
                     balken.GetComponent<Balken>().SetLength(0);
                 }
                 if (whiteblack[i] == 1)
@@ -99,6 +105,11 @@ public class BalkenHandler : MonoBehaviour {
                     balken.GetComponent<Balken>().SetLength(0);
                 }
                 i++;
+            }
+
+            if(i == tempoList.Count)
+            {
+                Reset();
             }
 
             speed = meterspersecond * Time.deltaTime;
@@ -147,21 +158,19 @@ public class BalkenHandler : MonoBehaviour {
                 suppList[s] = 0;   
             }
             i = 0;
+            Initialize();
         }
 
         //start and reset temps
         if(temp_start)
         {
-            reseted = false;
-            started = true;
-            startTime = Time.fixedTime;
+            Initialize();
             temp_start = false;
         }
 
         if (temp_reset)
         {
-            reseted = true;
-            started = false;
+            Reset();
             temp_reset = false;
         }
     }
@@ -178,9 +187,9 @@ public class BalkenHandler : MonoBehaviour {
         reseted = true;
         started = false;
     }
-
+     
     public void Hide()
     {
-        hidden = true;
+        hidden = !hidden;
     }
 }
