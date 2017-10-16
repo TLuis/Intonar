@@ -52,6 +52,7 @@ public class BalkenHandler : MonoBehaviour {
         {
             balken = Instantiate(balkenPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
+            balken.transform.localRotation = Quaternion.identity;
             balken.GetComponent<Balken>().Position(whites[i] * 0.01f, y_top - 0.1f, balkenPos);
             balken.GetComponent<Balken>().SetLength(0.5f);
         }
@@ -60,6 +61,7 @@ public class BalkenHandler : MonoBehaviour {
         {
             balken = Instantiate(blackPrefab, Vector3.zero, Quaternion.identity);
             balken.SetParent(this.transform);
+            balken.transform.localRotation = Quaternion.identity;
             balken.GetComponent<Balken>().Position(blacks[i] * 0.01f, y_top - 0.1f, balkenPos - blackOffset);
             balken.GetComponent<Balken>().SetLength(0.5f);
         }
