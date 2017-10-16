@@ -13,4 +13,13 @@ public class NoteHandler : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void Position(float x, float y, float z)
+    {
+        this.transform.localPosition = new Vector3(x, y, z);
+    }
+    public void Scale(float y)
+    {
+        this.transform.localScale = new Vector3(0.05f, 0.5f * y, 0.05f);
+    }
 }
