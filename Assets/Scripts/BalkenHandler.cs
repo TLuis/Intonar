@@ -31,6 +31,7 @@ public class BalkenHandler : MonoBehaviour {
     bool reseted = false;
     public bool hidden = false;
     bool condHid = false;
+    bool trigger = false;
 
     float[] keys = { -40.25f, -39.4f, -37.95f, -36.5f, -35.65f, -33.35f, -32.5f, -31.05f, -29.9f, -28.75f, -27.3f, -26.45f, -24.15f, -23.3f, -21.85f, -20.4f, -19.55f, -17.25f, -16.4f, -14.95f, -13.8f, -12.65f, -11.2f, -10.35f, -8.05f, -7.2f, -5.75f, -4.3f, -3.45f, -1.15f, -0.3f, 1.15f, 2.3f, 3.45f, 4.9f, 5.75f, 8.05f, 8.9f, 10.35f, 11.8f, 12.65f, 14.95f, 15.8f, 17.25f, 18.4f, 19.55f, 21f, 21.85f, 24.15f, 25f, 26.45f, 27.9f, 28.75f, 31.05f, 31.9f, 33.35f, 34.5f, 35.65f, 37.1f, 37.95f, 40.25f };
 
@@ -74,6 +75,7 @@ public class BalkenHandler : MonoBehaviour {
             }
             condHid = true;
             started = false;
+            i = 0;
         }
         if (hidden && condHid)
         {
@@ -107,7 +109,7 @@ public class BalkenHandler : MonoBehaviour {
                 i++;
             }
 
-            if(i == tempoList.Count)
+            if(i == tempoList.Count && trigger)
             {
                 Reset();
             }
